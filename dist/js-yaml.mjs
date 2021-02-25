@@ -1,5 +1,5 @@
 
-/*! js-yaml 4.0.0 https://github.com/nodeca/js-yaml @license MIT */
+/*! @zkochan/js-yaml 0.0.1 https://github.com/nodeca/js-yaml @license MIT */
 function isNothing(subject) {
   return (typeof subject === 'undefined') || (subject === null);
 }
@@ -2933,6 +2933,7 @@ var QUOTING_TYPE_SINGLE = 1,
     QUOTING_TYPE_DOUBLE = 2;
 
 function State$1(options) {
+  this.blankLines    = options['blankLines'] || false;
   this.schema        = options['schema'] || _default;
   this.indent        = Math.max(1, (options['indent'] || 2));
   this.noArrayIndent = options['noArrayIndent'] || false;
@@ -2985,8 +2986,8 @@ function indentString(string, spaces) {
   return result;
 }
 
-function generateNextLine(state, level) {
-  return '\n' + common.repeat(' ', state.indent * level);
+function generateNextLine(state, level, doubleLine) {
+  return '\n' + (doubleLine ? '\n' : '') + common.repeat(' ', state.indent * level);
 }
 
 function testImplicitResolving(state, str) {
@@ -3490,7 +3491,7 @@ function writeFlowMapping(state, level, object) {
   state.dump = '{' + _result + '}';
 }
 
-function writeBlockMapping(state, level, object, compact) {
+function writeBlockMapping(state, level, object, compact, doubleLine) {
   var _result       = '',
       _tag          = state.tag,
       objectKeyList = Object.keys(object),
@@ -3517,7 +3518,7 @@ function writeBlockMapping(state, level, object, compact) {
     pairBuffer = '';
 
     if (!compact || _result !== '') {
-      pairBuffer += generateNextLine(state, level);
+      pairBuffer += generateNextLine(state, level, doubleLine);
     }
 
     objectKey = objectKeyList[index];
@@ -3548,7 +3549,7 @@ function writeBlockMapping(state, level, object, compact) {
       pairBuffer += generateNextLine(state, level);
     }
 
-    if (!writeNode(state, level + 1, objectValue, true, explicitPair)) {
+    if (!writeNode(state, level + 1, objectValue, true, explicitPair, null, null, objectKey)) {
       continue; // Skip this pair because of invalid value.
     }
 
@@ -3614,7 +3615,7 @@ function detectType(state, object, explicit) {
 // Serializes `object` and writes it to global `result`.
 // Returns true on success, or false on invalid object.
 //
-function writeNode(state, level, object, block, compact, iskey, isblockseq) {
+function writeNode(state, level, object, block, compact, iskey, isblockseq, objectKey) {
   state.tag = null;
   state.dump = object;
 
@@ -3650,8 +3651,10 @@ function writeNode(state, level, object, block, compact, iskey, isblockseq) {
       state.usedDuplicates[duplicateIndex] = true;
     }
     if (type === '[object Object]') {
-      if (block && (Object.keys(state.dump).length !== 0)) {
-        writeBlockMapping(state, level, state.dump, compact);
+      if (block && (Object.keys(state.dump).length !== 0) && objectKey !== 'resolution') {
+        var doubleLine = state.blankLines ?
+          (objectKey === 'packages' || objectKey === 'importers' || level === 0) : false;
+        writeBlockMapping(state, level, state.dump, compact, doubleLine);
         if (duplicate) {
           state.dump = '&ref_' + duplicateIndex + state.dump;
         }
