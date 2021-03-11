@@ -1,6 +1,6 @@
 {
   "name": "@zkochan/js-yaml",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "YAML 1.2 parser and serializer",
   "keywords": [
     "yaml",
@@ -38,7 +38,7 @@
     "test": "npm run lint && mocha",
     "coverage": "npm run lint && nyc mocha && nyc report --reporter html",
     "demo": "npm run lint && node support/build_demo.js",
-    "gh-demo": "npm run demo && gh-pages -d demo -f",
+    "gh-demo": "npm run demo",
     "browserify": "rollup -c support/rollup.config.js",
     "prepublishOnly": "npm run gh-demo"
   },
