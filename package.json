@@ -1,6 +1,6 @@
 {
   "name": "@zkochan/js-yaml",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "YAML 1.2 parser and serializer",
   "keywords": [
     "yaml",
