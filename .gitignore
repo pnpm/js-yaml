@@ -3,5 +3,6 @@ coverage
 demo
 node_modules
 doc
+dist
 benchmark/implementations/*
 !/benchmark/implementations/current/
