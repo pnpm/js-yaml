@@ -40,7 +40,7 @@
     "demo": "npm run lint && node support/build_demo.js",
     "gh-demo": "npm run demo",
     "browserify": "rollup -c support/rollup.config.js",
-    "prepublishOnly": "npm run gh-demo"
+    "prepublishOnly": "npm run browserify && npm run gh-demo"
   },
   "unpkg": "dist/js-yaml.min.js",
   "jsdelivr": "dist/js-yaml.min.js",
